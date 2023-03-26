@@ -36,7 +36,7 @@ def main ():
     cv2.waitKey()
 
     # Apply HoughLinesP method to
-    # to directly obtain line end points
+    #  directly obtain line end points
     lines = cv2.HoughLinesP(edges, # Input edge image
             1, # Distance resolution in pixels
             np.pi/180, # Angle resolution in radians
