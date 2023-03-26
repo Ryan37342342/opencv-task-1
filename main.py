@@ -10,12 +10,12 @@ def main ():
 
     # # Convert into gray scale
 
-    with open("/home/ryan/Downloads/cracking/Labels/GX010120-138.xml", "r") as xml_obj:
+    with open("cracking/Labels/GX010120-138.xml", "r") as xml_obj:
         # coverting the xml data to Python dictionary
         my_dict = xmltodict.parse(xml_obj.read())
         # closing the file
         xml_obj.close()
-    image = cv2.imread('/home/ryan/Downloads/cracking/Images/GX010120-138.jpg')
+    image = cv2.imread('cracking/Images/GX010120-138.jpg')
     objects = my_dict["annotation"]["object"]
     bbox = objects["bndbox"]
     x1=int(bbox["xmin"])
