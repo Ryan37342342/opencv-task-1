@@ -40,24 +40,26 @@ def main ():
         cv2.imshow("0 "+ class_name, resized)
         
         
-
-        src = cv2.bilateralFilter(resized,9,75,75) 
+        	
+        gray = cv2.cvtColor(resized, cv2.COLOR_BGR2GRAY)
+       
         # cv2.imshow("1 "+ class_name, src)
         # cv2.waitKey()
         # contrast the image
-        adjusted = cv2.convertScaleAbs(src, alpha=3.5, beta=10)
-        cv2.imshow("2 "+ class_name, adjusted)
-        cv2.waitKey()
-        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5,5))
-        opening = cv2.morphologyEx(adjusted, cv2.MORPH_OPEN, kernel)
-        cv2.imshow("3 "+ class_name, opening)
+        adjusted = cv2.convertScaleAbs(gray, alpha=4, beta=2) 
+        src = cv2.bilateralFilter(adjusted,9,75,75) 
+        cv2.imshow("1 "+ class_name, adjusted)
+   
+        cv2.imshow("2 "+ class_name, src)
+      
        
 
-        edges = cv2.Canny(opening,50, 100,3)
-        cv2.imshow("4 "+ class_name, edges)
+        edges = cv2.Canny(adjusted,50, 100,3
+                          )
+        cv2.imshow("3 "+ class_name, edges)
         
         
-        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (7,7))
+        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (7,7))
         opening = cv2.morphologyEx(edges, cv2.MORPH_CLOSE, kernel)
         cv2.imshow("d "+ class_name, opening)
 
@@ -71,10 +73,10 @@ def main ():
         lines = cv2.HoughLinesP(opening, # Input edge image
                 1, # Distance resolution in pixels
                 np.pi/180, # Angle resolution in radians
-                threshold=10, # Min number of votes for valid line
+                threshold=50, # Min number of votes for valid line
                 minLineLength=50, # Min allowed length of line
 
-                maxLineGap=5 # Max allowed gap bet
+                maxLineGap=2 # Max allowed gap bet
                                 )
         lines_list= list()
         dist =0
@@ -93,7 +95,7 @@ def main ():
                 dist = dist + (x2-x1 + y2-y1)
         
             
-            cv2.imshow("5 "+ class_name, resized)
+            cv2.imshow("4 "+ class_name, resized)
             cv2.waitKey()
             print("total pixels:", dist)
         
