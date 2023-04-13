@@ -5,8 +5,9 @@
 import cv2
 import math
 import glob
-
+import os
 import numpy as np
+
 def main ():
 
     # jpg file in dir
@@ -14,18 +15,21 @@ def main ():
         # create path to image
         image_name = label_path.split("/")[-1]
         image_path = "cracking/images/" + image_name.removesuffix(".txt") +".jpg"
-        print(label_path)
-        # read in label
-        with open(label_path, "r") as label_file:
-            labels = label_file.readlines()
-            
-        for label in labels:
-            image = cv2.imread(image_path)
-            image_height,image_width,colour = image.shape
-            print("1",label)
-
-            # # get area of interest
-            # image = image[y1:y2, x1:x2]
+        if os.path.isfile(image_path):
+            print(label_path)
+            # read in label
+            with open(label_path, "r") as label_file:
+                labels = label_file.readlines()
+                
+            for label in labels:
+                image = cv2.imread(image_path)
+                image_height,image_width,colour = image.shape
+                label = label.split(" ")
+                print(label[0])
+                # cv2.imshow("test",image)
+                # cv2.waitKey()
+           
+             #image = image[y1:y2, x1:x2]
             
             # class_name = "cracking"
             # resized = cv2.resize(image,(300,300),interpolation = cv2.INTER_AREA)

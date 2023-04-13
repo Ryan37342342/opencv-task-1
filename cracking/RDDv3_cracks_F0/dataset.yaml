@@ -1,0 +1,10 @@
+path: /path/to/dataset/
+train: train
+val:   val
+test:  val
+names:
+ 0: Longitudinal_Cracking
+ 1: Crocodile_Cracking
+ 2: Pumping_Cracking
+ 3: Transverse_Cracking
+ 4: Block_Cracking
