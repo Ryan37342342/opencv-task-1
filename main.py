@@ -51,24 +51,63 @@ def main ():
                     centerY = float(label_spilt[2])
                     w = float(label_spilt[3]) 
                     h = float(label_spilt[4])  
-                    ox1 = (centerX - w/2) * image_width
-                    ox2 = (centerX + w/2) * image_width
-                    oy1 = (centerY - h/2) * image_height
-                    oy2 = (centerY + h/2) * image_height
                    
-                    image = org_image[int(oy1):int(oy2), int(ox1):int(ox2)] 
-                    cv2.imshow("Org", image)
+                    ox1 = (centerX - w/2 ) * image_width
+                    ox2 = (centerX + w/2 )* image_width
+                    oy1 = (centerY - h/2 ) * image_height
+                    oy2 = (centerY + h/2 ) * image_height
+
+                    # get height
+                    bbox_height = oy2-oy1
+                    bbox_width = ox2-ox1
+                    # get centre point 
+                    centerX = bbox_width/2
+                    centerY = bbox_height/2
+                    # if centre y
+                    print(centerY)
+
+                    # if centre y is too close
+                    if (centerY - 256) < 0:
+                        # get distance to edge 
+                        d = image_height -256
+                        # move the centre up by the distance
+                        centerY = d
+                        
+                        
+                    # else if the centre is too close to the top
+                    elif (centerY + 256) > image_height:
+                        edge_distance = image_height -256
+                        centerY = edge_distance
+                        
+                     # if centre y is too close
+                    if (centerX - 256) < 0:
+                        # get distance to edge 
+                        d = image_height -256
+                        # move the centre up by the distance
+                        centerX = d
+                        
+                        
+                    # else if the centre is too close to the top
+                    elif (centerX + 256) > image_height:
+                        edge_distance = image_height -256
+                        centerX = edge_distance
+
+                 
                     
-                    # double image size
-                    width = int(image.shape[1] * 200 / 100)
-                    height = int(image.shape[0] * 200 / 100)
+                    y1 = centerY - 256
+                    y2 = centerY + 256 
+                    
+                    x1= centerX - 256
+                    x2 = centerX +256
+                        
+                    image = org_image[int(y1):int(y2), int(x1):int(x2)] 
+                    print(image.shape)
+                   
                   
-                    resized = cv2.resize(image,(width,height),interpolation = cv2.INTER_LINEAR)
-                   
-                    
+                    cv2.imwrite(filename=("/home/lonrixlaptop/opencv tasks/opencv-task-1/cracking/512/"+image_name+".jpg"),img=image)
                     # turn image gray    
-                    gray = cv2.cvtColor(resized, cv2.COLOR_BGR2GRAY)
-                    cv2.imshow("test ",gray)
+                    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+                    cv2.imshow("test ",image)
 
                     # compute gamma = log(mid*255)/log(mean)
                     mid = 0.9
@@ -78,26 +117,26 @@ def main ():
 
                     # do gamma correction
                     gamma = np.power(gray, gamma).clip(0,255).astype(np.uint8)
-
+                    cv2.imshow("test2 ",gamma)
                     # noise removal and edge preservation
                     blur = cv2.bilateralFilter(gamma,9,150,150) 
-                    cv2.imshow("test0 ",gamma)
+                    cv2.imshow("test3 ",blur)
                  
                    
                     
                     # detect edges
                     edges = cv2.Canny(blur,50, 100,3)
-                    cv2.imshow("test3 ",edges)
+                    cv2.imshow("test4 ",edges)
                    
                     # fill gaps
                     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (10,10))
                     opening = cv2.morphologyEx(edges, cv2.MORPH_CLOSE, kernel) 
-                    cv2.imshow("tes4 ",opening)
+                    cv2.imshow("test5 ",opening)
 
                    # compact blobls
                     thinned = cv2.ximgproc.thinning(opening)
                     cv2.imshow("tes54 ",thinned)
-                    cv2.waitKey()
+                    
                  
                     
                     # Apply HoughLinesP method to
@@ -120,17 +159,16 @@ def main ():
                             # Extracted points nested in the list
                             x1, y1, x2, y2 = points[0]
                             # Draw the lines join the points
-                            # On the original image
-                            print(image_width)
-                            print(image_height)
+                      
                            
+                            cv2.line(image, (int(x1), int(y1)), (int(x2),int(y2)), (0, 255, 0), 2)
 
-                            x1=(x1/2) + int(ox1)
-                            x2=(x2/2) + int(ox1)
-                            y1=(y1/2) + int(oy1)
-                            y2=(y2/2) + int(oy1)
+                            x1=(x1) + int(ox1)
+                            x2=(x2) + int(ox1)
+                            y1=(y1) + int(oy1)
+                            y2=(y2) + int(oy1)
                            
-                            print(x1,x2,y1,y2)
+                            
                       
                            
             
@@ -139,11 +177,10 @@ def main ():
                             lines_list.append([(x1, y1), (x2, y2)])
                             dist = dist + ((x2)-(x1) + (y2)-(y2))
                     
-                        
-                        cv2.imshow("Lines ", org_image)
+                        cv2.imshow("Lines 1", image)    
+                        cv2.imshow("Lines 2", org_image)
                         cv2.waitKey()
-                 
-                    
+    
                     
                     print("total pixels:", dist)
                 else: 
